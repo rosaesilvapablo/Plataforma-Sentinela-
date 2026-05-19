@@ -4,12 +4,15 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import prettier from "eslint-config-prettier";
+import globals from "globals";
 
 export default [
   { ignores: ["dist", "coverage", "node_modules"] },
   js.configs.recommended,
+
+  // Codigo da aplicacao (TS/TSX)
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -18,13 +21,8 @@ export default [
         ecmaFeatures: { jsx: true },
       },
       globals: {
-        window: "readonly",
-        document: "readonly",
-        console: "readonly",
-        navigator: "readonly",
-        fetch: "readonly",
-        localStorage: "readonly",
-        sessionStorage: "readonly",
+        ...globals.browser,
+        ...globals.es2022,
       },
     },
     plugins: {
@@ -35,10 +33,7 @@ export default [
     rules: {
       ...tsPlugin.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
@@ -46,5 +41,27 @@ export default [
       "no-console": ["warn", { allow: ["warn", "error"] }],
     },
   },
+
+  // Configs em Node (vite.config.ts, vitest.config.ts, etc.)
+  {
+    files: ["*.config.{ts,js,mjs}", "vite.config.ts", "vitest.config.ts"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module",
+      },
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+    },
+  },
+
   prettier,
 ];
