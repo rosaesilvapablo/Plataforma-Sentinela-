@@ -1,0 +1,26 @@
+rules_version = '2';
+
+// Plataforma Sentinela 2026 — Regras Storage (base, sem modulos ainda).
+// Cada modulo que precisar de upload de arquivo recebera bloco proprio
+// com limite de tamanho e contentType permitido.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+
+    // Admin pode tudo (manutencao operacional).
+    match /{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Deny-all default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

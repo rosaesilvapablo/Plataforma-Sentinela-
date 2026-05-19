@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// =====================================================================
+// Plataforma Sentinela 2026 — Regras Firestore (base, sem modulos ainda)
+//
+// LICAO APRENDIDA do projeto anterior:
+//   - Firestore avalia TODOS os matches e libera se QUALQUER um permitir
+//     (logica OR). NUNCA escreva uma regra generica /{collection}/{docId}
+//     que duplique colecoes ja cobertas por blocos especificos — ela vai
+//     AMPLIAR o acesso e ANULAR validacoes.
+//   - Sempre prefira "deny by default + bloco explicito por colecao".
+//   - Validacoes de schema (hasOnly + tipos) sao defesa em profundidade,
+//     mas devem refletir o schema real do app — testar antes de deploy.
+//
+// Cada modulo da Plataforma Sentinela sera adicionado a este arquivo com
+// seu proprio bloco e validacao. Por enquanto, deny-all.
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+
+    // Admin tem CRUD total em todas as colecoes (regra mestra).
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Deny-all default: qualquer coisa nao explicitamente permitida acima
+    // ou em blocos especificos (adicionados a cada novo modulo) e negada.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
