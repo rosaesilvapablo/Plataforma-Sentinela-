@@ -6,6 +6,9 @@ import {
   sendPasswordResetEmail,
   updatePassword,
   reauthenticateWithCredential,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
   EmailAuthProvider,
   type User,
 } from "firebase/auth";
@@ -37,7 +40,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       status,
       user,
       role,
-      async signIn(email, password) {
+      async signIn(email, password, remember = true) {
+        await setPersistence(
+          auth,
+          remember ? browserLocalPersistence : browserSessionPersistence,
+        );
         await signInWithEmailAndPassword(auth, email, password);
       },
       async signOut() {

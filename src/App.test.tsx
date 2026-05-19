@@ -3,11 +3,13 @@ import { describe, it, expect } from "vitest";
 import { App } from "@/App";
 
 describe("App", () => {
-  it("redireciona para a tela de login quando o usuario nao esta autenticado", async () => {
+  it("renderiza a tela de login quando o usuario nao esta autenticado", async () => {
     render(<App />);
     expect(
-      await screen.findByRole("heading", { name: /sentinela 2026/i }),
+      await screen.findByRole("heading", { name: /guardi[aã]o da/i }),
     ).toBeInTheDocument();
-    expect(await screen.findByRole("button", { name: /entrar/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: /acessar sistema/i }),
+    ).toBeInTheDocument();
   });
 });

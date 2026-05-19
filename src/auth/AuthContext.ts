@@ -8,7 +8,7 @@ export type AuthContextValue = {
   status: AuthStatus;
   user: User | null;
   role: Role | null;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string, remember?: boolean) => Promise<void>;
   signOut: () => Promise<void>;
   sendReset: (email: string) => Promise<void>;
   changePassword: (current: string, next: string) => Promise<void>;
