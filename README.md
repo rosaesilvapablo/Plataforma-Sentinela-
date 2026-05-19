@@ -9,11 +9,18 @@ funcional contra o contrato (`docs/CONTRATO_DIRETRIZES_ESCOPO.md`) e a matriz
 
 ## Stack
 
-- Vite + React 18 + TypeScript (strict, com `noUncheckedIndexedAccess` e `exactOptionalPropertyTypes`)
-- Tailwind CSS 3
-- Firebase: Auth, Firestore, Cloud Functions, Storage, Hosting, App Check
-- Vitest + Testing Library
+- Vite 8 + React 19 + TypeScript 5.9 (strict, com `noUncheckedIndexedAccess` e `exactOptionalPropertyTypes`)
+- Tailwind CSS 4 (CSS-first com `@theme`, via `@tailwindcss/vite`)
+- Firebase 12: Auth, Firestore, Cloud Functions, Storage, Hosting, App Check
+- React Router 7
+- Vitest 4 + Testing Library + jsdom 29
 - ESLint 9 (flat config) + Prettier
+- Zod 4 (validação de schema)
+- Lucide React 1 (ícones)
+
+Nota: ESLint mantido em 9.x e TypeScript em 5.9.x porque o `typescript-eslint` 8.x
+(ultimo estavel) ainda nao suporta oficialmente ESLint 10 / TypeScript 6. Bumpamos
+quando o ecossistema acompanhar.
 
 ## Comandos
 
