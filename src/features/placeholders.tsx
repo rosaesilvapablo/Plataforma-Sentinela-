@@ -19,15 +19,6 @@ export function CalendarioPage() {
   );
 }
 
-export function ExpedientesPage() {
-  return (
-    <ModulePlaceholder
-      title="Expedientes"
-      description="Oficios, cartas precatorias e mandados. Maquina de estados estrita (pendente -> emitido -> cumprido | em_diligencia | cancelado). Prazos default configuraveis."
-    />
-  );
-}
-
 export function SisbajudPage() {
   return (
     <ModulePlaceholder

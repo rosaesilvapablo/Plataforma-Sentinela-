@@ -260,6 +260,43 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Expedientes =====
+
+    function expedienteCanRead() {
+      return isAuthenticated() && request.auth.token.role in
+        ['admin', 'diretor', 'juiz', 'supervisor', 'servidor'];
+    }
+
+    function expedienteCanWrite() {
+      return isAuthenticated() && request.auth.token.role in
+        ['admin', 'diretor', 'supervisor', 'servidor'];
+    }
+
+    function expedienteValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'processo', 'tipo', 'destinatario', 'assunto', 'status',
+        'dataEmissao', 'prazoDevolucao', 'dataCumprimento',
+        'responsavel', 'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll([
+          'processo', 'tipo', 'destinatario', 'assunto', 'status'
+        ])
+        && request.resource.data.processo is string
+        && request.resource.data.destinatario is string
+        && request.resource.data.assunto is string
+        && request.resource.data.tipo in
+          ['oficio', 'carta_precatoria', 'mandado_diligencia']
+        && request.resource.data.status in
+          ['pendente', 'emitido', 'em_diligencia', 'cumprido', 'cancelado'];
+    }
+
+    match /expedientes/{id} {
+      allow read: if expedienteCanRead();
+      allow create: if expedienteCanWrite() && expedienteValidShape();
+      allow update: if expedienteCanWrite() && expedienteValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;

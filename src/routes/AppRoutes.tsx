@@ -6,10 +6,10 @@ import { DashboardHome } from "@/features/dashboard/DashboardHome";
 import { AdminPage } from "@/features/admin/AdminPage";
 import { EquipePage } from "@/features/equipe/EquipePage";
 import { PplPage } from "@/features/ppl/PplPage";
+import { ExpedientesPage } from "@/features/expedientes/ExpedientesPage";
 import {
   MesaTrabalhoPage,
   CalendarioPage,
-  ExpedientesPage,
   SisbajudPage,
   RecolhimentosPage,
   EstatisticasPage,
