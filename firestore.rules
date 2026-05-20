@@ -455,6 +455,27 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Calendario =====
+
+    function calendarEventValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'titulo', 'categoria', 'data', 'observacoes',
+        'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['titulo', 'categoria', 'data'])
+        && request.resource.data.titulo is string
+        && request.resource.data.data is timestamp
+        && request.resource.data.categoria in
+          ['feriado', 'institucional', 'audiencia', 'outro'];
+    }
+
+    match /calendar_events/{id} {
+      allow read: if hasFullAccess();
+      allow create: if hasFullAccess() && calendarEventValidShape();
+      allow update: if hasFullAccess() && calendarEventValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;
