@@ -9,15 +9,6 @@ export function CalendarioPage() {
   );
 }
 
-export function RecolhimentosPage() {
-  return (
-    <ModulePlaceholder
-      title="Recolhimentos & Gestao"
-      description="Painel de orientacoes (rich text editavel por admin/diretor) + Gestao de Contas (ANPP, PRD, Conta Unica) com extrato e destinacao rastreavel."
-    />
-  );
-}
-
 export function EstatisticasPage() {
   return (
     <ModulePlaceholder

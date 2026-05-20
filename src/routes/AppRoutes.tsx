@@ -9,9 +9,9 @@ import { PplPage } from "@/features/ppl/PplPage";
 import { ExpedientesPage } from "@/features/expedientes/ExpedientesPage";
 import { MesaTrabalhoPage } from "@/features/mesa/MesaTrabalhoPage";
 import { SisbajudPage } from "@/features/sisbajud/SisbajudPage";
+import { RecolhimentosPage } from "@/features/recolhimentos/RecolhimentosPage";
 import {
   CalendarioPage,
-  RecolhimentosPage,
   EstatisticasPage,
   MetasCnjPage,
 } from "@/features/placeholders";

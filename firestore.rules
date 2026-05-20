@@ -372,6 +372,45 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Recolhimentos & Gestao =====
+
+    // Orientacoes: doc unico, todos autenticados leem, apenas admin/diretor edita
+    match /recolhimentos_orientacoes/main {
+      allow read: if isAuthenticated();
+      allow write: if hasFullAccess()
+        && request.resource.data.keys().hasOnly([
+          'conteudo', 'updatedAt', 'updatedByUid', 'updatedByName'
+        ])
+        && request.resource.data.conteudo is string;
+    }
+
+    function movimentoValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'conta', 'tipo', 'valor', 'data', 'descricao', 'destinacao',
+        'processo', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll([
+          'conta', 'tipo', 'valor', 'data', 'descricao'
+        ])
+        && request.resource.data.valor is number
+        && request.resource.data.valor >= 0
+        && request.resource.data.data is timestamp
+        && request.resource.data.conta in ['anpp', 'prd', 'conta_unica']
+        && request.resource.data.tipo in ['entrada', 'saida'];
+    }
+
+    match /contas_movimentos/{id} {
+      allow read: if hasAccessJuizadoFinanceiro();
+      allow create: if hasFullAccess() && movimentoValidShape();
+      allow update: if hasFullAccess() && movimentoValidShape();
+      allow delete: if hasFullAccess();
+    }
+
+    function hasAccessJuizadoFinanceiro() {
+      return isAuthenticated() && request.auth.token.role in
+        ['admin', 'diretor', 'juiz'];
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;
