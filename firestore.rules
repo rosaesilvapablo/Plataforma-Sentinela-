@@ -137,6 +137,56 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Equipe → Plantao =====
+
+    function plantaoValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'juizId', 'juizNome', 'servidorId', 'servidorNome', 'tipo',
+        'dataInicio', 'dataFim', 'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll([
+          'juizId', 'juizNome', 'servidorId', 'servidorNome', 'tipo',
+          'dataInicio', 'dataFim'
+        ])
+        && request.resource.data.juizId is string
+        && request.resource.data.servidorId is string
+        && request.resource.data.dataInicio is timestamp
+        && request.resource.data.dataFim is timestamp
+        && request.resource.data.dataInicio <= request.resource.data.dataFim
+        && request.resource.data.tipo in ['ordinario', 'extraordinario', 'recesso'];
+    }
+
+    match /plantoes/{id} {
+      allow read: if isAuthenticated();
+      allow create: if hasFullAccess() && plantaoValidShape();
+      allow update: if hasFullAccess() && plantaoValidShape();
+      allow delete: if hasFullAccess();
+    }
+
+    // ===== Modulo Equipe → Regime de Trabalho =====
+
+    function regimeValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'memberId', 'memberNome', 'tipo', 'processoSei',
+        'dataInicio', 'dataFimPrevista', 'observacoes',
+        'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll([
+          'memberId', 'memberNome', 'tipo', 'processoSei', 'dataInicio'
+        ])
+        && request.resource.data.memberId is string
+        && request.resource.data.processoSei is string
+        && request.resource.data.dataInicio is timestamp
+        && request.resource.data.tipo in ['presencial', 'hibrido', 'integral_remoto'];
+    }
+
+    match /regime_trabalho/{id} {
+      allow read: if hasFullAccess();
+      allow create: if hasFullAccess() && regimeValidShape();
+      allow update: if hasFullAccess() && regimeValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;
