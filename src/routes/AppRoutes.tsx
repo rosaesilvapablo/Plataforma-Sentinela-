@@ -11,10 +11,8 @@ import { MesaTrabalhoPage } from "@/features/mesa/MesaTrabalhoPage";
 import { SisbajudPage } from "@/features/sisbajud/SisbajudPage";
 import { RecolhimentosPage } from "@/features/recolhimentos/RecolhimentosPage";
 import { EstatisticasPage } from "@/features/estatisticas/EstatisticasPage";
-import {
-  CalendarioPage,
-  MetasCnjPage,
-} from "@/features/placeholders";
+import { MetasCnjPage } from "@/features/metas/MetasCnjPage";
+import { CalendarioPage } from "@/features/placeholders";
 import { RequireAuth } from "@/auth/RequireAuth";
 import { RequireRole } from "@/auth/RequireRole";
 import { AppShell } from "@/components/layout/AppShell";

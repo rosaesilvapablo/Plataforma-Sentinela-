@@ -431,6 +431,30 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Metas CNJ =====
+
+    function metaValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'codigo', 'descricao', 'periodo', 'percentual',
+        'valorAlvo', 'valorAlcancado', 'observacoes',
+        'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll([
+          'codigo', 'descricao', 'periodo', 'percentual'
+        ])
+        && request.resource.data.codigo is string
+        && request.resource.data.descricao is string
+        && request.resource.data.periodo is string
+        && request.resource.data.percentual is number;
+    }
+
+    match /metas_cnj_evolucao/{id} {
+      allow read: if hasAccessJuizadoFinanceiro();
+      allow create: if hasFullAccess() && metaValidShape();
+      allow update: if hasFullAccess() && metaValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;

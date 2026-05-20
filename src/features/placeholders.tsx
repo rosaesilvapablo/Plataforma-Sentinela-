@@ -8,12 +8,3 @@ export function CalendarioPage() {
     />
   );
 }
-
-export function MetasCnjPage() {
-  return (
-    <ModulePlaceholder
-      title="Metas CNJ"
-      description="Evolucao mensal de % de cumprimento das metas. Tabela + curva de tendencia + projecao 'se mantiver ritmo, cumpre/nao cumpre' com GAP."
-    />
-  );
-}
