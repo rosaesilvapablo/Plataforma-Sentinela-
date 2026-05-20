@@ -324,6 +324,54 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo SISBAJUD & Depositos =====
+
+    function sisbajudCanRead() {
+      return isAuthenticated() && request.auth.token.role in
+        ['admin', 'diretor', 'juiz', 'supervisor', 'servidor'];
+    }
+
+    function sisbajudOrdemValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'processo', 'ordem', 'pessoa', 'valor', 'status', 'data',
+        'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll([
+          'processo', 'ordem', 'pessoa', 'valor', 'status', 'data'
+        ])
+        && request.resource.data.valor is number
+        && request.resource.data.valor >= 0
+        && request.resource.data.data is timestamp
+        && request.resource.data.status in
+          ['pendente', 'bloqueado', 'transferido', 'cancelado'];
+    }
+
+    match /sisbajud_ordens/{id} {
+      allow read: if sisbajudCanRead();
+      allow create: if hasFullAccess() && sisbajudOrdemValidShape();
+      allow update: if hasFullAccess() && sisbajudOrdemValidShape();
+      allow delete: if hasFullAccess();
+    }
+
+    function depositoValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'processo', 'conta', 'valor', 'data', 'ordemSisbajudId',
+        'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['processo', 'conta', 'valor', 'data'])
+        && request.resource.data.valor is number
+        && request.resource.data.valor >= 0
+        && request.resource.data.data is timestamp
+        && request.resource.data.conta in ['anpp', 'prd', 'conta_unica', 'judicial'];
+    }
+
+    match /depositos_sisbajud/{id} {
+      allow read: if sisbajudCanRead();
+      allow create: if hasFullAccess() && depositoValidShape();
+      allow update: if hasFullAccess() && depositoValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;

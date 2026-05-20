@@ -9,15 +9,6 @@ export function CalendarioPage() {
   );
 }
 
-export function SisbajudPage() {
-  return (
-    <ModulePlaceholder
-      title="SISBAJUD & Depositos"
-      description="Ordens SISBAJUD (1:N) depositos vinculados. Conciliacao visual: bloqueado x transferido x saldo. Timeline do desdobramento da ordem."
-    />
-  );
-}
-
 export function RecolhimentosPage() {
   return (
     <ModulePlaceholder

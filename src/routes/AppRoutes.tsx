@@ -8,9 +8,9 @@ import { EquipePage } from "@/features/equipe/EquipePage";
 import { PplPage } from "@/features/ppl/PplPage";
 import { ExpedientesPage } from "@/features/expedientes/ExpedientesPage";
 import { MesaTrabalhoPage } from "@/features/mesa/MesaTrabalhoPage";
+import { SisbajudPage } from "@/features/sisbajud/SisbajudPage";
 import {
   CalendarioPage,
-  SisbajudPage,
   RecolhimentosPage,
   EstatisticasPage,
   MetasCnjPage,
