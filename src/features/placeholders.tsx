@@ -1,15 +1,5 @@
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
-export function MesaTrabalhoPage() {
-  return (
-    <ModulePlaceholder
-      title="Mesa de Trabalho"
-      description="Kanban com colunas = estados processuais (concluso para despacho, decisao, sentenca, em diligencia, concluido)."
-      next="A implementar: schema Zod, repositorio, regras Firestore, UI de quadro com drag-and-drop, maquina de transicoes."
-    />
-  );
-}
-
 export function CalendarioPage() {
   return (
     <ModulePlaceholder

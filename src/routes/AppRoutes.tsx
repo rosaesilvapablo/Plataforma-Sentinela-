@@ -7,8 +7,8 @@ import { AdminPage } from "@/features/admin/AdminPage";
 import { EquipePage } from "@/features/equipe/EquipePage";
 import { PplPage } from "@/features/ppl/PplPage";
 import { ExpedientesPage } from "@/features/expedientes/ExpedientesPage";
+import { MesaTrabalhoPage } from "@/features/mesa/MesaTrabalhoPage";
 import {
-  MesaTrabalhoPage,
   CalendarioPage,
   SisbajudPage,
   RecolhimentosPage,

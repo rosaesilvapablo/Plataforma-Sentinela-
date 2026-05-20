@@ -297,6 +297,33 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Mesa de Trabalho (Kanban) =====
+
+    function mesaCanWrite() {
+      return isAuthenticated() && request.auth.token.role in
+        ['admin', 'diretor', 'supervisor', 'servidor'];
+    }
+
+    function mesaValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'titulo', 'processo', 'column', 'assigneeId', 'assigneeNome',
+        'prazo', 'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['titulo', 'processo', 'column'])
+        && request.resource.data.titulo is string
+        && request.resource.data.processo is string
+        && request.resource.data.column in
+          ['concluso_despacho', 'concluso_decisao', 'concluso_sentenca',
+           'em_diligencia', 'concluido'];
+    }
+
+    match /mesa_cards/{id} {
+      allow read: if expedienteCanRead();
+      allow create: if mesaCanWrite() && mesaValidShape();
+      allow update: if mesaCanWrite() && mesaValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;
