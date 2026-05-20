@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/Modal";
@@ -45,7 +45,7 @@ export function MovimentoDialog({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<MovimentoForm>({
@@ -71,7 +71,7 @@ export function MovimentoDialog({
         },
   });
 
-  const tipoAtual = watch("tipo");
+  const tipoAtual = useWatch({ control, name: "tipo" });
 
   async function onSubmit(data: MovimentoForm) {
     setSubmitError(null);
