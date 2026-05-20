@@ -81,12 +81,3 @@ export function EquipePage() {
     />
   );
 }
-
-export function AdminPage() {
-  return (
-    <ModulePlaceholder
-      title="Admin"
-      description="Usuarios (criar, atribuir/trocar role, desativar via Cloud Function com guards), Configuracoes (parametros do sistema), Logs/Auditoria (escrita server-side), Exportacoes/Backups (futuro)."
-    />
-  );
-}

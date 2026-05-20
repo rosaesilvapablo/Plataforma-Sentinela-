@@ -3,6 +3,7 @@ import { LoginPage } from "@/features/auth/LoginPage";
 import { ForgotPasswordPage } from "@/features/auth/ForgotPasswordPage";
 import { ChangePasswordPage } from "@/features/auth/ChangePasswordPage";
 import { DashboardHome } from "@/features/dashboard/DashboardHome";
+import { AdminPage } from "@/features/admin/AdminPage";
 import {
   MesaTrabalhoPage,
   CalendarioPage,
@@ -13,7 +14,6 @@ import {
   EstatisticasPage,
   MetasCnjPage,
   EquipePage,
-  AdminPage,
 } from "@/features/placeholders";
 import { RequireAuth } from "@/auth/RequireAuth";
 import { RequireRole } from "@/auth/RequireRole";

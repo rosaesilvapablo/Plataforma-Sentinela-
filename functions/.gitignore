@@ -1,0 +1,10 @@
+node_modules/
+lib/
+*.log
+firebase-debug.*log*
+
+# Credenciais locais — NUNCA versionar nem empacotar no deploy
+serviceAccountKey*.json
+*.serviceaccount.json
+.env
+.env.*

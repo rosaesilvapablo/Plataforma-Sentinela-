@@ -66,8 +66,29 @@ npm run test:watch
 ## Setup do Firebase (acao manual)
 
 1. Criar novo projeto no [console do Firebase](https://console.firebase.google.com/).
-2. Habilitar: Authentication (Email/Password), Firestore (modo producao), Storage, Functions.
-3. Copiar `.firebaserc.example` para `.firebaserc` e preencher com o `project_id`.
-4. Copiar `.env.example` para `.env.local` e preencher com a config Web do projeto.
-5. Habilitar App Check (reCAPTCHA Enterprise) e colar a site key em `VITE_FIREBASE_APPCHECK_SITE_KEY`.
-6. Considerar dominio proprio desde o inicio para evitar flag de Safe Browsing do `*.web.app`.
+2. Habilitar: Authentication (Email/Password), Firestore (modo producao), Storage.
+3. Para Cloud Functions: **plano Blaze necessario** (free tier de 2M invocacoes/mes).
+4. `.firebaserc` ja aponta para `plataforma-sentinela` e `.env.local` ja contem a config Web.
+5. Habilitar App Check (reCAPTCHA Enterprise) e colar a site key em `VITE_FIREBASE_APPCHECK_SITE_KEY` (opcional, recomendado em producao).
+6. Considerar dominio proprio para evitar flag de Safe Browsing do `*.web.app`.
+
+## Primeiro admin (bootstrap)
+
+Para criar o **primeiro** admin (precondição para usar o modulo Admin → Usuarios e criar os demais):
+
+1. **Firebase Console → Authentication → Users → Add user**: crie sua conta com e-mail e senha.
+2. **Anote o UID** que aparece na lista.
+3. **Project Settings → Service accounts → Generate new private key**: baixe o JSON e salve como `serviceAccountKey.json` na RAIZ do projeto (ja gitignored).
+4. **Instale firebase-admin no functions/** (se ainda nao):
+   ```
+   npm --prefix functions install
+   ```
+5. **Rode o bootstrap**:
+   ```
+   cd functions
+   node scripts/bootstrap-admin.mjs <SEU_UID>
+   ```
+6. **FACA LOGOUT e LOGIN** novamente no app para o token receber a claim `role=admin`.
+7. **APAGUE `serviceAccountKey.json`** do disco — nao deve ficar local.
+
+Apos esse passo unico, voce pode criar os demais usuarios via Admin → Usuarios (UI), sem precisar de service account.
