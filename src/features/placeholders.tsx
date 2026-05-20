@@ -72,12 +72,3 @@ export function MetasCnjPage() {
     />
   );
 }
-
-export function EquipePage() {
-  return (
-    <ModulePlaceholder
-      title="Equipe"
-      description="Quadro Geral (lotacao paradigma x real), Cadastro (cargoEfetivo imutavel + funcaoComissionada mutavel sem historico), Frequencia (docId autogerado), Plantao, Regime de Trabalho (vinculo SEI)."
-    />
-  );
-}

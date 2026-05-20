@@ -7,7 +7,7 @@ import prettier from "eslint-config-prettier";
 import globals from "globals";
 
 export default [
-  { ignores: ["dist", "coverage", "node_modules", "functions/lib", "functions/node_modules"] },
+  { ignores: ["dist", "coverage", "node_modules", "functions"] },
   js.configs.recommended,
 
   // Codigo da aplicacao (TS/TSX)

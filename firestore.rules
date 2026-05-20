@@ -3,20 +3,24 @@ rules_version = '2';
 // =====================================================================
 // Plataforma Sentinela 2026 — Regras Firestore
 //
-// LICOES APRENDIDAS do legado:
-//   - Firestore avalia TODOS os matches e libera se QUALQUER um permitir
-//     (logica OR). NUNCA escreva uma regra generica /{collection}/{docId}
-//     que duplique colecoes ja cobertas por blocos especificos — amplia
-//     o acesso e anula validacoes.
-//   - Prefira deny-all + bloco explicito por colecao.
-//   - admin e diretor sao funcionalmente identicos (CRUD total) — use
-//     `hasFullAccess()` como helper.
+// PRINCIPIOS (do `docs/ARQUITETURA.md`):
+//   1. Deny-all por padrao + bloco EXPLICITO por colecao.
+//   2. NUNCA usar regra mestra wildcard `match /{document=**}` para
+//      conceder acesso — ela ANULA validacoes por colecao (logica OR
+//      do Firestore amplia o acesso). Foi exatamente o bug critico do
+//      legado.
+//   3. admin e diretor sao funcionalmente identicos (CRUD total) via
+//      helper `hasFullAccess()` — mas precisam estar listados em CADA
+//      bloco de colecao, nao via wildcard.
+//   4. Validacao de schema (`hasOnly` + tipos + enums) em CADA escrita.
 //
-// Cada modulo adiciona seu proprio bloco abaixo, conforme entregue.
+// Cada novo modulo adiciona seu proprio bloco abaixo, com validacao.
 // =====================================================================
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ===== Helpers =====
 
     function isAuthenticated() {
       return request.auth != null;
@@ -27,24 +31,65 @@ service cloud.firestore {
         && (request.auth.token.role == 'admin' || request.auth.token.role == 'diretor');
     }
 
-    // ===== Regra mestra: admin/diretor tem CRUD total =====
-    match /{document=**} {
-      allow read, write: if hasFullAccess();
-    }
-
     // ===== Modulo Admin → Usuarios =====
-    //
-    // access_list e lida por admin/diretor (cobertos pela regra mestra acima).
-    // Escrita acontece SOMENTE via Cloud Functions (admin SDK ignora rules),
-    // o que garante atomicidade com auth.setCustomUserClaims e auditabilidade.
-    // Cliente nao pode escrever direto.
+    // access_list e gerenciada via Cloud Functions (admin SDK).
+    // Cliente le; nao escreve.
     match /access_list/{uid} {
       allow read: if hasFullAccess();
       allow write: if false;
     }
 
+    // ===== Modulo Equipe → Cadastro =====
+
+    function teamAllowedKeys() {
+      return ['nome', 'email', 'matricula', 'cargoEfetivo', 'funcaoComissionada',
+              'tipoVinculo', 'lotacaoParadigma', 'lotacaoAtual', 'status',
+              'observacoes', 'createdAt', 'updatedAt'];
+    }
+
+    function teamRequiredKeys() {
+      return ['nome', 'email', 'matricula', 'cargoEfetivo',
+              'tipoVinculo', 'lotacaoParadigma', 'lotacaoAtual', 'status'];
+    }
+
+    function teamValidTipoVinculo() {
+      return request.resource.data.tipoVinculo in
+        ['juiz', 'servidor', 'estagiario', 'terceirizado',
+         'cedido', 'requisitado', 'voluntario'];
+    }
+
+    function teamValidStatus() {
+      return request.resource.data.status in ['ativo', 'afastado', 'desligado'];
+    }
+
+    function teamValidShape() {
+      return request.resource.data.keys().hasOnly(teamAllowedKeys())
+        && request.resource.data.keys().hasAll(teamRequiredKeys())
+        && request.resource.data.nome is string
+        && request.resource.data.email is string
+        && request.resource.data.matricula is string
+        && request.resource.data.cargoEfetivo is string
+        && request.resource.data.lotacaoParadigma is string
+        && request.resource.data.lotacaoAtual is string
+        && teamValidTipoVinculo()
+        && teamValidStatus();
+    }
+
+    function teamCargoEfetivoUnchanged() {
+      // Em update, cargoEfetivo nao pode mudar (regra de negocio).
+      return resource.data.cargoEfetivo == request.resource.data.cargoEfetivo;
+    }
+
+    match /team/{memberId} {
+      // Leitura: todos os autenticados (consulta de equipe e operacional).
+      allow read: if isAuthenticated();
+      // Escrita: admin/diretor com schema valido.
+      allow create: if hasFullAccess() && teamValidShape();
+      allow update: if hasFullAccess() && teamValidShape() && teamCargoEfetivoUnchanged();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
-    // Qualquer coisa nao coberta acima e negada.
     match /{document=**} {
       allow read, write: if false;
     }
