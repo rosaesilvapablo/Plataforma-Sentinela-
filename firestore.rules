@@ -196,14 +196,20 @@ service cloud.firestore {
 
     function pplValidShape() {
       return request.resource.data.keys().hasOnly([
-        'nome', 'cpf', 'rg', 'processo', 'tipoPrisao', 'dataPrisao',
-        'ultimaRevisao', 'proximaRevisao', 'unidade', 'observacoes',
-        'createdAt', 'updatedAt'
+        'nome', 'rji', 'cpf', 'rg', 'processo', 'local',
+        'situacao', 'tipoPrisao',
+        'dataCumprimento', 'ultimaRevisao', 'proximaRevisao',
+        'redNotice', 'redNoticeDate',
+        'observacoes', 'createdAt', 'updatedAt'
       ])
-        && request.resource.data.keys().hasAll(['nome', 'processo', 'tipoPrisao', 'dataPrisao'])
+        && request.resource.data.keys().hasAll([
+          'nome', 'processo', 'situacao', 'tipoPrisao', 'redNotice'
+        ])
         && request.resource.data.nome is string
         && request.resource.data.processo is string
-        && request.resource.data.dataPrisao is timestamp
+        && request.resource.data.redNotice is bool
+        && request.resource.data.situacao in
+          ['pessoa_presa', 'mandado_pendente', 'pessoa_foragida']
         && request.resource.data.tipoPrisao in
           ['preventiva', 'temporaria', 'flagrante', 'definitiva',
            'monitoramento_eletronico', 'outra'];
@@ -243,12 +249,20 @@ service cloud.firestore {
 
     function testemunhaValidShape() {
       return request.resource.data.keys().hasOnly([
-        'codigo', 'caso', 'status', 'dataInclusao', 'dataEncerramento',
+        'codigo', 'processo', 'quantidadePessoas',
+        'inProvita', 'dataInclusaoProvita',
+        'status', 'dataInclusao', 'dataEncerramento',
         'observacoes', 'createdAt', 'updatedAt'
       ])
-        && request.resource.data.keys().hasAll(['codigo', 'caso', 'status', 'dataInclusao'])
+        && request.resource.data.keys().hasAll([
+          'codigo', 'processo', 'quantidadePessoas',
+          'inProvita', 'status', 'dataInclusao'
+        ])
         && request.resource.data.codigo is string
-        && request.resource.data.caso is string
+        && request.resource.data.processo is string
+        && request.resource.data.quantidadePessoas is int
+        && request.resource.data.quantidadePessoas >= 1
+        && request.resource.data.inProvita is bool
         && request.resource.data.dataInclusao is timestamp
         && request.resource.data.status in ['ativo', 'encerrado'];
     }

@@ -26,19 +26,29 @@ function emptyToNull(v: string): string | null {
   return t.length > 0 ? t : null;
 }
 
-function dateStringToTimestamp(s: string): Timestamp {
+function dateStringToTimestamp(s: string): Timestamp | null {
+  if (!s) return null;
   return Timestamp.fromDate(new Date(`${s}T12:00:00`));
 }
 
 function map(docId: string, data: DocumentData): Testemunha | null {
   const st = statusTestemunhaSchema.safeParse(data.status);
   if (!st.success) return null;
-  if (typeof data.codigo !== "string" || typeof data.caso !== "string") return null;
+  if (typeof data.codigo !== "string" || typeof data.processo !== "string") return null;
+  if (typeof data.quantidadePessoas !== "number" || !Number.isInteger(data.quantidadePessoas)) {
+    return null;
+  }
   if (!(data.dataInclusao instanceof Timestamp)) return null;
   return {
     id: docId,
     codigo: data.codigo,
-    caso: data.caso,
+    processo: data.processo,
+    quantidadePessoas: data.quantidadePessoas,
+    inProvita: data.inProvita === true,
+    dataInclusaoProvita:
+      data.dataInclusaoProvita instanceof Timestamp
+        ? data.dataInclusaoProvita.toDate()
+        : null,
     status: st.data,
     dataInclusao: data.dataInclusao.toDate(),
     dataEncerramento:
@@ -74,12 +84,15 @@ export function subscribeToTestemunhas(
 function payload(input: TestemunhaForm) {
   return {
     codigo: input.codigo.trim(),
-    caso: input.caso.trim(),
+    processo: input.processo.trim(),
+    quantidadePessoas: input.quantidadePessoas,
+    inProvita: input.inProvita,
+    dataInclusaoProvita: input.inProvita
+      ? dateStringToTimestamp(input.dataInclusaoProvita)
+      : null,
     status: input.status,
     dataInclusao: dateStringToTimestamp(input.dataInclusao),
-    dataEncerramento: input.dataEncerramento
-      ? dateStringToTimestamp(input.dataEncerramento)
-      : null,
+    dataEncerramento: dateStringToTimestamp(input.dataEncerramento),
     observacoes: emptyToNull(input.observacoes),
     updatedAt: serverTimestamp(),
   };
