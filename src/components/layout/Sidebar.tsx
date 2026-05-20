@@ -1,16 +1,19 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
-  CalendarX,
+  KanbanSquare,
   CalendarDays,
-  Briefcase,
-  ScrollText,
   Gavel,
+  ScrollText,
   Banknote,
-  Coins,
+  Wallet,
   BarChart3,
+  Target,
+  Users,
+  Settings,
 } from "lucide-react";
+import { useAuth } from "@/auth/useAuth";
+import { hasAnyRole, type Role } from "@/domain/roles";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -18,22 +21,50 @@ type NavItem = {
   label: string;
   icon: typeof LayoutDashboard;
   end?: boolean;
+  /** Se definido, o item so aparece para perfis listados (admin/diretor sempre veem). */
+  requiredRoles?: readonly Role[];
 };
 
 const navItems: readonly NavItem[] = [
-  { to: "/", label: "Painel", icon: LayoutDashboard, end: true },
-  { to: "/equipe", label: "Equipe", icon: Users },
-  { to: "/ausencias", label: "Ausencias", icon: CalendarX },
-  { to: "/calendario", label: "Calendario Institucional", icon: CalendarDays },
-  { to: "/plantao", label: "Plantao Judicial", icon: Briefcase },
+  { to: "/", label: "Sala de Situacao", icon: LayoutDashboard, end: true },
+  { to: "/mesa", label: "Mesa de Trabalho", icon: KanbanSquare },
+  {
+    to: "/calendario",
+    label: "Calendario",
+    icon: CalendarDays,
+    requiredRoles: ["admin", "diretor"],
+  },
+  { to: "/ppl", label: "PPL Criminal", icon: Gavel },
   { to: "/expedientes", label: "Expedientes", icon: ScrollText },
-  { to: "/ppl", label: "PPL e Medidas Cautelares", icon: Gavel },
-  { to: "/sisbajud", label: "SISBAJUD", icon: Banknote },
-  { to: "/depositos", label: "Depositos e Recolhimentos", icon: Coins },
-  { to: "/estatisticas", label: "Estatisticas e Metas", icon: BarChart3 },
+  { to: "/sisbajud", label: "SISBAJUD & Depositos", icon: Banknote },
+  { to: "/recolhimentos", label: "Recolhimentos & Gestao", icon: Wallet },
+  {
+    to: "/estatisticas",
+    label: "Estatisticas",
+    icon: BarChart3,
+    requiredRoles: ["admin", "diretor", "juiz"],
+  },
+  {
+    to: "/metas",
+    label: "Metas CNJ",
+    icon: Target,
+    requiredRoles: ["admin", "diretor", "juiz"],
+  },
+  { to: "/equipe", label: "Equipe", icon: Users },
+  {
+    to: "/admin",
+    label: "Admin",
+    icon: Settings,
+    requiredRoles: ["admin", "diretor"],
+  },
 ];
 
 export function Sidebar() {
+  const { role } = useAuth();
+  const visible = navItems.filter(
+    (item) => !item.requiredRoles || hasAnyRole(role, item.requiredRoles),
+  );
+
   return (
     <aside className="hidden md:flex h-screen w-64 flex-col bg-sentinela-ink text-slate-100 sticky top-0">
       <div className="px-6 py-5 border-b border-slate-700">
@@ -42,7 +73,7 @@ export function Sidebar() {
       </div>
       <nav aria-label="Navegacao principal" className="flex-1 overflow-y-auto p-3">
         <ul className="space-y-1">
-          {navItems.map((item) => (
+          {visible.map((item) => (
             <li key={item.to}>
               <NavLink
                 to={item.to}

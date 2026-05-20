@@ -48,16 +48,20 @@ npm run test:watch
 ## Status
 
 - [x] Bootstrap (configs, tooling, estrutura, deny-all rules)
-- [ ] Auth + layout + design system + Firebase wiring
-- [ ] Modulo Equipe (primeiro CRUD)
-- [ ] Modulo Ausencias
-- [ ] Calendario Institucional
-- [ ] Plantao Judicial
+- [x] Auth + layout + design system + Firebase wiring
+- [x] Login redesenhado com identidade Sentinela
+- [x] Arquitetura definitiva fechada (ver `docs/MATRIZ_MODULOS_CONTRATO.md`)
+- [ ] Modulo Equipe (Quadro Geral, Cadastro, Frequencia, Plantao, Regime)
+- [ ] Modulo Admin (Usuarios, Config, Logs)
+- [ ] PPL Criminal (Lista, Mandados & Difusao Vermelha, Testemunhas)
+- [ ] Mesa de Trabalho (Kanban)
+- [ ] Calendario (agregador)
 - [ ] Expedientes
-- [ ] PPL e Medidas Cautelares
-- [ ] SISBAJUD
-- [ ] Depositos e Recolhimentos
-- [ ] Estatisticas, Metas e Dashboards
+- [ ] SISBAJUD & Depositos
+- [ ] Recolhimentos & Gestao
+- [ ] Estatisticas (boletins 1/4 via CSV)
+- [ ] Metas CNJ
+- [ ] Sala de Situacao (Dashboard reativa)
 
 ## Setup do Firebase (acao manual)
 

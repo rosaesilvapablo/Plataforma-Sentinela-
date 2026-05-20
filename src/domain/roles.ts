@@ -1,7 +1,7 @@
 export const ROLES = [
   "admin",
-  "juiz",
   "diretor",
+  "juiz",
   "supervisor",
   "servidor",
   "estagiario",
@@ -16,16 +16,25 @@ export function isRole(value: unknown): value is Role {
 
 export const ROLE_LABELS: Record<Role, string> = {
   admin: "Administrador",
-  juiz: "Juiz",
   diretor: "Diretor",
+  juiz: "Juiz",
   supervisor: "Supervisor",
   servidor: "Servidor",
   estagiario: "Estagiario",
   terceirizado: "Terceirizado",
 };
 
+/**
+ * Por decisao de arquitetura, `admin` e `diretor` sao funcionalmente identicos
+ * em termos de permissao — ambos tem CRUD total em todo o sistema. Mantidos
+ * como dois labels distintos por significado organizacional.
+ */
+export function hasFullAccess(current: Role | null): boolean {
+  return current === "admin" || current === "diretor";
+}
+
 export function hasAnyRole(current: Role | null, allowed: readonly Role[]): boolean {
   if (!current) return false;
-  if (current === "admin") return true;
+  if (hasFullAccess(current)) return true;
   return allowed.includes(current);
 }

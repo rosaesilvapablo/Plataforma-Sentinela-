@@ -4,17 +4,19 @@ import { ForgotPasswordPage } from "@/features/auth/ForgotPasswordPage";
 import { ChangePasswordPage } from "@/features/auth/ChangePasswordPage";
 import { DashboardHome } from "@/features/dashboard/DashboardHome";
 import {
-  EquipePage,
-  AusenciasPage,
+  MesaTrabalhoPage,
   CalendarioPage,
-  PlantaoPage,
-  ExpedientesPage,
   PplPage,
+  ExpedientesPage,
   SisbajudPage,
-  DepositosPage,
+  RecolhimentosPage,
   EstatisticasPage,
+  MetasCnjPage,
+  EquipePage,
+  AdminPage,
 } from "@/features/placeholders";
 import { RequireAuth } from "@/auth/RequireAuth";
+import { RequireRole } from "@/auth/RequireRole";
 import { AppShell } from "@/components/layout/AppShell";
 
 function ProtectedShell() {
@@ -31,20 +33,51 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Publicas */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/conta/recuperar" element={<ForgotPasswordPage />} />
 
+        {/* Protegidas */}
         <Route element={<ProtectedShell />}>
           <Route path="/" element={<DashboardHome />} />
-          <Route path="/equipe" element={<EquipePage />} />
-          <Route path="/ausencias" element={<AusenciasPage />} />
-          <Route path="/calendario" element={<CalendarioPage />} />
-          <Route path="/plantao" element={<PlantaoPage />} />
-          <Route path="/expedientes" element={<ExpedientesPage />} />
+          <Route path="/mesa" element={<MesaTrabalhoPage />} />
+          <Route
+            path="/calendario"
+            element={
+              <RequireRole roles={["admin", "diretor"]}>
+                <CalendarioPage />
+              </RequireRole>
+            }
+          />
           <Route path="/ppl" element={<PplPage />} />
+          <Route path="/expedientes" element={<ExpedientesPage />} />
           <Route path="/sisbajud" element={<SisbajudPage />} />
-          <Route path="/depositos" element={<DepositosPage />} />
-          <Route path="/estatisticas" element={<EstatisticasPage />} />
+          <Route path="/recolhimentos" element={<RecolhimentosPage />} />
+          <Route
+            path="/estatisticas"
+            element={
+              <RequireRole roles={["admin", "diretor", "juiz"]}>
+                <EstatisticasPage />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/metas"
+            element={
+              <RequireRole roles={["admin", "diretor", "juiz"]}>
+                <MetasCnjPage />
+              </RequireRole>
+            }
+          />
+          <Route path="/equipe" element={<EquipePage />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireRole roles={["admin", "diretor"]}>
+                <AdminPage />
+              </RequireRole>
+            }
+          />
           <Route path="/conta/senha" element={<ChangePasswordPage />} />
         </Route>
 
