@@ -411,6 +411,26 @@ service cloud.firestore {
         ['admin', 'diretor', 'juiz'];
     }
 
+    // ===== Modulo Estatisticas =====
+
+    function boletimValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'periodo', 'tipo', 'indicadores', 'observacoes',
+        'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['periodo', 'tipo', 'indicadores'])
+        && request.resource.data.periodo is string
+        && request.resource.data.indicadores is map
+        && request.resource.data.tipo in ['tipo_1', 'tipo_4'];
+    }
+
+    match /boletins_estatisticos/{id} {
+      allow read: if hasAccessJuizadoFinanceiro();
+      allow create: if hasFullAccess() && boletimValidShape();
+      allow update: if hasFullAccess() && boletimValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;

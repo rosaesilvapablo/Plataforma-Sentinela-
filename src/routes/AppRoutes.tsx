@@ -10,9 +10,9 @@ import { ExpedientesPage } from "@/features/expedientes/ExpedientesPage";
 import { MesaTrabalhoPage } from "@/features/mesa/MesaTrabalhoPage";
 import { SisbajudPage } from "@/features/sisbajud/SisbajudPage";
 import { RecolhimentosPage } from "@/features/recolhimentos/RecolhimentosPage";
+import { EstatisticasPage } from "@/features/estatisticas/EstatisticasPage";
 import {
   CalendarioPage,
-  EstatisticasPage,
   MetasCnjPage,
 } from "@/features/placeholders";
 import { RequireAuth } from "@/auth/RequireAuth";

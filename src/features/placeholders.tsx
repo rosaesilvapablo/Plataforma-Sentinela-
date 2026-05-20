@@ -9,15 +9,6 @@ export function CalendarioPage() {
   );
 }
 
-export function EstatisticasPage() {
-  return (
-    <ModulePlaceholder
-      title="Estatisticas"
-      description="Boletins tipo 1 (acervo) e tipo 4 (gerencial), mensais. Entrada via importacao CSV. Validacao cruzada com mes anterior."
-    />
-  );
-}
-
 export function MetasCnjPage() {
   return (
     <ModulePlaceholder
