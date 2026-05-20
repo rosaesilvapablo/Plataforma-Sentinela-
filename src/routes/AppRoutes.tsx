@@ -5,10 +5,10 @@ import { ChangePasswordPage } from "@/features/auth/ChangePasswordPage";
 import { DashboardHome } from "@/features/dashboard/DashboardHome";
 import { AdminPage } from "@/features/admin/AdminPage";
 import { EquipePage } from "@/features/equipe/EquipePage";
+import { PplPage } from "@/features/ppl/PplPage";
 import {
   MesaTrabalhoPage,
   CalendarioPage,
-  PplPage,
   ExpedientesPage,
   SisbajudPage,
   RecolhimentosPage,

@@ -19,15 +19,6 @@ export function CalendarioPage() {
   );
 }
 
-export function PplPage() {
-  return (
-    <ModulePlaceholder
-      title="PPL Criminal"
-      description="Pessoas Privadas de Liberdade + Mandados & Difusao Vermelha + Testemunhas Protegidas (Lei 9.807/99). Art. 316 com calculo automatico de proxima revisao e alertas em 3 niveis."
-    />
-  );
-}
-
 export function ExpedientesPage() {
   return (
     <ModulePlaceholder

@@ -187,6 +187,79 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo PPL Criminal =====
+
+    function pplCanRead() {
+      return isAuthenticated() && request.auth.token.role in
+        ['admin', 'diretor', 'juiz', 'supervisor', 'servidor'];
+    }
+
+    function pplValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'nome', 'cpf', 'rg', 'processo', 'tipoPrisao', 'dataPrisao',
+        'ultimaRevisao', 'proximaRevisao', 'unidade', 'observacoes',
+        'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['nome', 'processo', 'tipoPrisao', 'dataPrisao'])
+        && request.resource.data.nome is string
+        && request.resource.data.processo is string
+        && request.resource.data.dataPrisao is timestamp
+        && request.resource.data.tipoPrisao in
+          ['preventiva', 'temporaria', 'flagrante', 'definitiva',
+           'monitoramento_eletronico', 'outra'];
+    }
+
+    match /ppl/{id} {
+      allow read: if pplCanRead();
+      allow create: if hasFullAccess() && pplValidShape();
+      allow update: if hasFullAccess() && pplValidShape();
+      allow delete: if hasFullAccess();
+    }
+
+    function mandadoValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'pessoa', 'processo', 'categoria', 'prazo', 'status',
+        'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['pessoa', 'processo', 'categoria', 'status'])
+        && request.resource.data.pessoa is string
+        && request.resource.data.processo is string
+        && request.resource.data.categoria in
+          ['pendente_cumprimento', 'difusao_vermelha', 'revisao_316']
+        && request.resource.data.status in ['ativo', 'cumprido', 'cancelado'];
+    }
+
+    match /mandados/{id} {
+      allow read: if pplCanRead();
+      allow create: if hasFullAccess() && mandadoValidShape();
+      allow update: if hasFullAccess() && mandadoValidShape();
+      allow delete: if hasFullAccess();
+    }
+
+    // Testemunhas: acesso ainda mais restrito (diretor/juiz/admin), Lei 9.807/99.
+    function testemunhaCanRead() {
+      return isAuthenticated() && request.auth.token.role in ['admin', 'diretor', 'juiz'];
+    }
+
+    function testemunhaValidShape() {
+      return request.resource.data.keys().hasOnly([
+        'codigo', 'caso', 'status', 'dataInclusao', 'dataEncerramento',
+        'observacoes', 'createdAt', 'updatedAt'
+      ])
+        && request.resource.data.keys().hasAll(['codigo', 'caso', 'status', 'dataInclusao'])
+        && request.resource.data.codigo is string
+        && request.resource.data.caso is string
+        && request.resource.data.dataInclusao is timestamp
+        && request.resource.data.status in ['ativo', 'encerrado'];
+    }
+
+    match /protected_witnesses/{id} {
+      allow read: if testemunhaCanRead();
+      allow create: if hasFullAccess() && testemunhaValidShape();
+      allow update: if hasFullAccess() && testemunhaValidShape();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;
