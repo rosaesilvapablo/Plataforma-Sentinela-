@@ -89,6 +89,54 @@ service cloud.firestore {
       allow delete: if hasFullAccess();
     }
 
+    // ===== Modulo Equipe → Frequencia =====
+    //
+    // docId AUTOGERADO pelo Firestore (corrige bug do legado em que userId
+    // era usado como docId e sobrescrevia historico).
+    // Nesta v1: leitura e escrita apenas admin/diretor. Self-service do
+    // proprio servidor (ler/criar pedidos pendentes) e follow-up — exige
+    // ligar team.authUid ao auth UID.
+
+    function frequenciaAllowedKeys() {
+      return ['memberId', 'memberNome', 'tipo', 'dataInicio', 'dataFim',
+              'motivo', 'observacoes', 'createdByUid', 'createdByName',
+              'createdAt', 'updatedAt'];
+    }
+
+    function frequenciaRequiredKeys() {
+      return ['memberId', 'memberNome', 'tipo', 'dataInicio', 'dataFim',
+              'createdByUid', 'createdByName'];
+    }
+
+    function frequenciaValidTipo() {
+      return request.resource.data.tipo in
+        ['ausencia_justificada', 'falta_injustificada'];
+    }
+
+    function frequenciaValidShape() {
+      return request.resource.data.keys().hasOnly(frequenciaAllowedKeys())
+        && request.resource.data.keys().hasAll(frequenciaRequiredKeys())
+        && request.resource.data.memberId is string
+        && request.resource.data.memberNome is string
+        && request.resource.data.createdByUid is string
+        && request.resource.data.createdByName is string
+        && request.resource.data.dataInicio is timestamp
+        && request.resource.data.dataFim is timestamp
+        && request.resource.data.dataInicio <= request.resource.data.dataFim
+        && frequenciaValidTipo();
+    }
+
+    function frequenciaMemberIdUnchanged() {
+      return resource.data.memberId == request.resource.data.memberId;
+    }
+
+    match /frequencias/{id} {
+      allow read: if hasFullAccess();
+      allow create: if hasFullAccess() && frequenciaValidShape();
+      allow update: if hasFullAccess() && frequenciaValidShape() && frequenciaMemberIdUnchanged();
+      allow delete: if hasFullAccess();
+    }
+
     // ===== Deny-all default =====
     match /{document=**} {
       allow read, write: if false;
